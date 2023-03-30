@@ -6,6 +6,7 @@ import authRoutes from "./routes/auth.js";
 import videoRoutes from "./routes/videos.js";
 import commentRoutes from "./routes/comments.js";
 import cookieParser from 'cookie-parser';
+import cors from 'cors';
 
 
 const app = express();
@@ -20,9 +21,13 @@ const connect = () => {
 }
 
 //middlewares
+// 跨域放这里了
+app.use(cors({ origin: "http://localhost:3000", credentials: true }))
 app.use(cookieParser());
 // For loading the json body
 app.use(express.json());
+
+
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/videos", videoRoutes);

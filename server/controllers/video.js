@@ -77,7 +77,7 @@ export const addView = async (req, res, next) => {
 export const random = async (req, res, next) => {
     try {
         // mongodb奇怪的方法
-        const videos = await Video.aggregate([{ $sample: { size: 1 } }]);
+        const videos = await Video.aggregate([{ $sample: { size: 40 } }]);
         res.status(200).json(videos);
     } catch (err) {
         next(err);
@@ -105,6 +105,31 @@ export const sub = async (req, res, next) => {
         );
         // return these list
         res.status(200).json(list.flat().sort((a, b) => b.createdAt - a.createdAt))
+    } catch (err) {
+        next(err);
+    }
+}
+
+export const getByTag = async (req, res, next) => {
+    const tags = req.query.tags.split(',');
+    console.log(tags);
+    try {
+        // $in to check if the tags inside the array
+        // limit only fetch 20 not all;
+        const videos = await Video.find({ tags: { $in: tags } }).limit(20);
+        res.status(200).json(videos)
+    } catch (err) {
+        next(err);
+    }
+}
+
+export const search = async (req, res, next) => {
+    const query = req.query.q;
+    try {
+        // 单独页面，所以40ok
+        // regex就是正则匹配，模糊查询，i就是配置项，不分大小写的查询，都是mgdb的语法
+        const videos = await Video.find({ title: { $regex: query, $options: 'i' } }).limit(40);
+        res.status(200).json(videos)
     } catch (err) {
         next(err);
     }
