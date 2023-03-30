@@ -1,1 +1,0 @@
-URL to get the data from mongoDB
